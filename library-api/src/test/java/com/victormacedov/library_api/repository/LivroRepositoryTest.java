@@ -6,9 +6,11 @@ import com.victormacedov.library_api.model.enums.GeneroLivro;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @SpringBootTest
@@ -23,13 +25,13 @@ public class LivroRepositoryTest {
     @Test
     public void salvarTest(){
         Livro livro = new Livro();
-        livro.setIsbn("9780451524935");
-        livro.setTitulo("1984");
-        livro.setDataPublicacao(LocalDate.of(1949, 6, 8));
-        livro.setGenero(GeneroLivro.FICCAO);
+        livro.setIsbn("7598795843758");
+        livro.setTitulo("A mansão assombrada");
+        livro.setDataPublicacao(LocalDate.of(2005, 6, 12));
+        livro.setGenero(GeneroLivro.MISTERIO);
         livro.setPreco(BigDecimal.valueOf(70.00));
 
-        Autor autor = autorRepository.findById(UUID.fromString("0e36bb24-d5ab-4c7c-9015-0f452ce2efe4")).orElse(null);
+        Autor autor = autorRepository.findById(UUID.fromString("fa504537-727e-4726-aef3-4661f0ed05fe")).orElse(null);
         livro.setAutor(autor);
 
         livroRepository.save(livro);
@@ -100,4 +102,69 @@ public class LivroRepositoryTest {
         livroRepository.deleteById(idLivro);
     }
 
+    @Test
+    @Transactional
+    public void buscarLivroEAutorTest(){
+        UUID idLivro = UUID.fromString("29856710-15d6-4559-a39f-78cf506e7fde");
+        Livro livro = livroRepository.findById(idLivro).orElse(null);
+        System.out.println("Livro: " + livro.getTitulo());
+        System.out.println("Autor: " + livro.getAutor().getNome());
+    }
+
+    @Test
+    public void pesquisaPorTituloTest() {
+        List<Livro> listaDeLivros = livroRepository.findByTitulo("A casa assombrada");
+        listaDeLivros.forEach(System.out::println);
+    }
+
+    @Test
+    public void pesquisaPorIsbnTest() {
+        List<Livro> listaDeLivros = livroRepository.findByIsbn("2734985743985");
+        listaDeLivros.forEach(System.out::println);
+    }
+
+    @Test
+    public void pesquisaPorTituloEPrecoTest() {
+        List<Livro> listaDeLivros = livroRepository.findByTituloAndPreco("Quincas Borba", BigDecimal.valueOf(85.00));
+        listaDeLivros.forEach(System.out::println);
+    }
+
+    @Test
+    public void pesquisaPorTituloOuIsbnTest() {
+        List<Livro> listaDeLivros = livroRepository.findByTituloOrIsbn("O cientista maluco", "9788535910665");
+        listaDeLivros.forEach(System.out::println);
+    }
+
+    @Test
+    public void pesquisaPorDataPublicacaoEntreTest() {
+        LocalDate inicio = LocalDate.of(2000, 1, 1);
+        LocalDate fim = LocalDate.of(2020, 12, 31);
+        List<Livro> listaDeLivros = livroRepository.findByDataPublicacaoBetweenOrderByDataPublicacao(inicio, fim);
+        listaDeLivros.forEach(System.out::println);
+    }
+
+    @Test
+    public void listarLivroComJPQLTest() {
+        List<Livro> listaDeLivros = livroRepository.listarTodosOsLivrosOrdenadoPorTituloEPreco();
+        listaDeLivros.forEach(System.out::println);
+    }
+
+    @Test
+    @Transactional
+    public void listarAutoresDosLivrosTest() {
+        List<Autor> listaDeAutores = livroRepository.listarAutoresDosLivros();
+        listaDeAutores.forEach(System.out::println);
+    }
+
+    @Test
+    public void listarTitulosNaoRepetidosDosLivrosTest() {
+        List<String> listaDeLivros = livroRepository.listarNomesNaoRepetidosLivros();
+        listaDeLivros.forEach(System.out::println);
+    }
+
+    @Test
+    public void listarGenerosAutoresBrasileirosTest() {
+        List<String> listaDeLivros = livroRepository.listarGenerosAutoresBrasileiros();
+        listaDeLivros.forEach(System.out::println);
+    }
 }

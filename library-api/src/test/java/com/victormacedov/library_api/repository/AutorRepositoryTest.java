@@ -1,11 +1,15 @@
 package com.victormacedov.library_api.repository;
 
 import com.victormacedov.library_api.model.Autor;
+import com.victormacedov.library_api.model.Livro;
+import com.victormacedov.library_api.model.enums.GeneroLivro;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,6 +19,9 @@ public class AutorRepositoryTest {
 
     @Autowired
     AutorRepository autorRepository;
+
+    @Autowired
+    LivroRepository livroRepository;
 
     @Test
     public void salvarAutorTest(){
@@ -67,5 +74,46 @@ public class AutorRepositoryTest {
         var autor = autorRepository.findById(id).get();
         autorRepository.delete(autor);
         System.out.println("Autor deletado: " + autor.getId() + " - " + autor.getNome());
+    }
+
+    @Test
+    public void salvarAutorComLivrosCascadeTest(){
+        Autor autor = new Autor();
+        autor.setNome("Antônio");
+        autor.setNacionalidade("Americano");
+        autor.setDataNascimento(LocalDate.of(1980, 5, 15));
+
+        Livro livro1 = new Livro();
+        livro1.setIsbn("1723897178123");
+        livro1.setTitulo("A casa assombrada");
+        livro1.setDataPublicacao(LocalDate.of(2003, 5, 15));
+        livro1.setGenero(GeneroLivro.MISTERIO);
+        livro1.setPreco(BigDecimal.valueOf(55.00));
+        livro1.setAutor(autor);
+
+        Livro livro2 = new Livro();
+        livro2.setIsbn("2734985743985");
+        livro2.setTitulo("O cientista maluco");
+        livro2.setDataPublicacao(LocalDate.of(2000, 2, 27));
+        livro2.setGenero(GeneroLivro.CIENCIA);
+        livro2.setPreco(BigDecimal.valueOf(55.00));
+        livro2.setAutor(autor);
+
+        autor.setLivro(new ArrayList<>());
+        autor.getLivro().add(livro1);
+        autor.getLivro().add(livro2);
+
+        autorRepository.save(autor);
+    }
+
+    @Test
+    public void listarLivroAutor(){
+        var idAutor = UUID.fromString("a9e747e9-27a6-43b9-92c3-a4eb4308ee8a");
+        var autor = autorRepository.findById(idAutor).get();
+
+        List<Livro> livrosDoAutor = livroRepository.findByAutor(autor);
+        autor.setLivro(livrosDoAutor);
+
+        autor.getLivro().forEach(System.out::println);
     }
 }
