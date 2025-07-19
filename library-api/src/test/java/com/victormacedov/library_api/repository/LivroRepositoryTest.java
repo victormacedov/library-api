@@ -25,13 +25,13 @@ public class LivroRepositoryTest {
     @Test
     public void salvarTest(){
         Livro livro = new Livro();
-        livro.setIsbn("7598795843758");
-        livro.setTitulo("A mansão assombrada");
-        livro.setDataPublicacao(LocalDate.of(2005, 6, 12));
-        livro.setGenero(GeneroLivro.MISTERIO);
-        livro.setPreco(BigDecimal.valueOf(70.00));
+        livro.setIsbn("3769485769847");
+        livro.setTitulo("Sua vida por uma linha - VictaoM");
+        livro.setDataPublicacao(LocalDate.of(2010, 4, 26));
+        livro.setGenero(GeneroLivro.BIOGRAFIA);
+        livro.setPreco(BigDecimal.valueOf(60.00));
 
-        Autor autor = autorRepository.findById(UUID.fromString("fa504537-727e-4726-aef3-4661f0ed05fe")).orElse(null);
+        Autor autor = autorRepository.findById(UUID.fromString("0e36bb24-d5ab-4c7c-9015-0f452ce2efe4")).orElse(null);
         livro.setAutor(autor);
 
         livroRepository.save(livro);
@@ -166,5 +166,29 @@ public class LivroRepositoryTest {
     public void listarGenerosAutoresBrasileirosTest() {
         List<String> listaDeLivros = livroRepository.listarGenerosAutoresBrasileiros();
         listaDeLivros.forEach(System.out::println);
+    }
+
+    @Test
+    public void listarLivrosPorGeneroNamedParamTest() {
+        var livro = livroRepository.findByGeneroNamedParam(GeneroLivro.MISTERIO, "preco");
+        livro.forEach(System.out::println);
+    }
+
+    @Test
+    public void listarLivrosPorGeneroPositionalParamTest() {
+        var livro = livroRepository.findByGeneroPositionalParam(GeneroLivro.FICCAO, "dataPublicacao");
+        livro.forEach(System.out::println);
+    }
+
+    @Test
+    public void deletarLivrosPorGeneroTest() {
+        livroRepository.deleteByGenero(GeneroLivro.BIOGRAFIA);
+    }
+
+    @Test
+    public void atualizarDataPublicacaoDosLivrosTest() {
+        LocalDate novaDataPublicacao = LocalDate.of(2023, 10, 1);
+        UUID idLivro = UUID.fromString("8cb32136-9406-4198-8ddf-3ec01af377c0");
+        livroRepository.updateDataPublicacao(novaDataPublicacao, idLivro);
     }
 }
