@@ -23,15 +23,15 @@ public class LivroRepositoryTest {
     AutorRepository autorRepository;
 
     @Test
-    public void salvarTest(){
+    public void salvarTest() {
         Livro livro = new Livro();
-        livro.setIsbn("3769485769847");
-        livro.setTitulo("Sua vida por uma linha - VictaoM");
-        livro.setDataPublicacao(LocalDate.of(2010, 4, 26));
-        livro.setGenero(GeneroLivro.BIOGRAFIA);
-        livro.setPreco(BigDecimal.valueOf(60.00));
+        livro.setIsbn("9788531904354");
+        livro.setTitulo("Iracema");
+        livro.setDataPublicacao(LocalDate.of(1865, 4, 26));
+        livro.setGenero(GeneroLivro.ROMANCE);
+        livro.setPreco(BigDecimal.valueOf(45.00));
 
-        Autor autor = autorRepository.findById(UUID.fromString("0e36bb24-d5ab-4c7c-9015-0f452ce2efe4")).orElse(null);
+        Autor autor = autorRepository.findById(UUID.fromString("b1ec9143-8cc2-425b-84e0-40538957968d")).orElse(null);
         livro.setAutor(autor);
 
         livroRepository.save(livro);

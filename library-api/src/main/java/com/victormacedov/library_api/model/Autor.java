@@ -1,17 +1,24 @@
 package com.victormacedov.library_api.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "autor")
-@Data
+@Getter
+@Setter
 @ToString(exclude = "livros")
+@EntityListeners(AuditingEntityListener.class)
 public class Autor {
 
     @Id
@@ -28,6 +35,19 @@ public class Autor {
     @Column(name = "nacionalidade", length = 50, nullable = false)
     private String nacionalidade;
 
-    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "autor",
+            //cascade = CascadeType.ALL, 
+            fetch = FetchType.LAZY)
     private List<Livro> livro;
+
+    @CreatedDate
+    @Column(name = "data_cadastro")
+    private LocalDateTime dataCadastro;
+
+    @LastModifiedDate
+    @Column(name = "data_ultima_atualizacao")
+    private LocalDateTime dataUltimaAtualizacao;
+
+    @Column(name = "id_usuario_ultima_atualizacao")
+    private UUID idUsuarioUltimaAtualizacao;
 }
