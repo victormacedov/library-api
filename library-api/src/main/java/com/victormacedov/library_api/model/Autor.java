@@ -38,7 +38,7 @@ public class Autor {
     @OneToMany(mappedBy = "autor",
             //cascade = CascadeType.ALL, 
             fetch = FetchType.LAZY)
-    private List<Livro> livro;
+    private List<Livro> livros;
 
     @CreatedDate
     @Column(name = "data_cadastro")

@@ -22,9 +22,9 @@ public class AutorService {
     private final AutorValidator autorValidator;
     private final LivroRepository livroRepository;
 
-    public Autor salvarAutor(Autor autor) {
+    public void salvarAutor(Autor autor) {
         autorValidator.validar(autor);
-        return autorRepository.save(autor);
+        autorRepository.save(autor);
     }
 
     public void atualizarAutor(Autor autor) {
@@ -41,7 +41,7 @@ public class AutorService {
 
     public void deletarAutor(Autor autor) {
         if (possuiLivro(autor)) {
-            throw new OperacaoNaoPermitidaException("Não é possível excluir o autor, pois ele possui livros associados.");
+            throw new OperacaoNaoPermitidaException("Não é possível excluir o autor, pois ele possui livros cadastrados.");
         }
 
         autorRepository.delete(autor);
