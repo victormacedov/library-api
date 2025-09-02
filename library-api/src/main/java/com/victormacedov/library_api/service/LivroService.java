@@ -1,9 +1,11 @@
 package com.victormacedov.library_api.service;
 
 import com.victormacedov.library_api.model.Livro;
+import com.victormacedov.library_api.model.Usuario;
 import com.victormacedov.library_api.model.enums.GeneroLivro;
 import com.victormacedov.library_api.repository.LivroRepository;
 import com.victormacedov.library_api.repository.specs.LivroSpecs;
+import com.victormacedov.library_api.security.SecurityService;
 import com.victormacedov.library_api.validator.LivroValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,9 +23,12 @@ public class LivroService {
 
     private final LivroRepository livroRepository;
     private final LivroValidator livroValidator;
+    private final SecurityService securityService;
 
     public Livro salvarLivro(Livro livro) {
         livroValidator.validarIsbnUnico(livro);
+        Usuario usuario = securityService.obterUsuarioLogado();
+        livro.setIdUsuarioUltimaAtualizacao(usuario);
         return livroRepository.save(livro);
     }
 

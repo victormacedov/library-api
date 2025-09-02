@@ -7,6 +7,7 @@ import com.victormacedov.library_api.service.AutorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -24,7 +25,9 @@ public class AutorController implements GenericController {
     private final AutorMapper autorMapper;
 
     @PostMapping
+    @PreAuthorize("hasRole('GERENTE')")
     public ResponseEntity<Void> salvarAutor(@RequestBody @Valid AutorDTO autorDTO) {
+
         Autor autor = autorMapper.toAutor(autorDTO);
         autorService.salvarAutor(autor);
 
@@ -34,6 +37,7 @@ public class AutorController implements GenericController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('OPERADOR', 'GERENTE')")
     public ResponseEntity<AutorDTO> obterDetalhesPorId(@PathVariable String id) {
         var idAutor = UUID.fromString(id);
 
@@ -46,6 +50,7 @@ public class AutorController implements GenericController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('GERENTE')")
     public ResponseEntity<Void> deletarAutorPorId(@PathVariable String id) {
         var idAutor = UUID.fromString(id);
         Optional<Autor> autorOptional = autorService.obterPorId(idAutor);
@@ -59,6 +64,7 @@ public class AutorController implements GenericController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('OPERADOR', 'GERENTE')")
     public ResponseEntity<List<AutorDTO>> filtrarAutores(
             @RequestParam(value = "nome", required = false) String nome,
             @RequestParam(value = "nacionalidade", required = false) String nacionalidade) {
@@ -73,6 +79,7 @@ public class AutorController implements GenericController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('GERENTE')")
     public ResponseEntity<Void> atualizarAutor(@PathVariable String id, @RequestBody @Valid AutorDTO autorDTO) {
 
         var idAutor = UUID.fromString(id);

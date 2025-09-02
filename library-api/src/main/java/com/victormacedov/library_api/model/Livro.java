@@ -49,8 +49,9 @@ public class Livro {
     @Column(name = "data_ultima_atualizacao")
     private LocalDateTime dataUltimaAtualizacao;
 
-    @Column(name = "id_usuario_ultima_atualizacao")
-    private UUID idUsuarioUltimaAtualizacao;
+    @ManyToOne
+    @JoinColumn(name = "id_usuario_ultima_atualizacao")
+    private Usuario idUsuarioUltimaAtualizacao;
 
     @ManyToOne(
             //cascade = CascadeType.ALL,

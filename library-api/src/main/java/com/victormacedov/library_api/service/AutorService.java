@@ -2,8 +2,10 @@ package com.victormacedov.library_api.service;
 
 import com.victormacedov.library_api.exceptions.OperacaoNaoPermitidaException;
 import com.victormacedov.library_api.model.Autor;
+import com.victormacedov.library_api.model.Usuario;
 import com.victormacedov.library_api.repository.AutorRepository;
 import com.victormacedov.library_api.repository.LivroRepository;
+import com.victormacedov.library_api.security.SecurityService;
 import com.victormacedov.library_api.validator.AutorValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
@@ -21,9 +23,12 @@ public class AutorService {
     private final AutorRepository autorRepository;
     private final AutorValidator autorValidator;
     private final LivroRepository livroRepository;
+    private final SecurityService securityService;
 
     public void salvarAutor(Autor autor) {
         autorValidator.validar(autor);
+        Usuario usuario = securityService.obterUsuarioLogado();
+        autor.setIdUsuarioUltimaAtualizacao(usuario);
         autorRepository.save(autor);
     }
 

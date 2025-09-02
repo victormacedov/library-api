@@ -6,6 +6,7 @@ import com.victormacedov.library_api.exceptions.CampoInvalidoException;
 import com.victormacedov.library_api.exceptions.OperacaoNaoPermitidaException;
 import com.victormacedov.library_api.exceptions.RegistroDuplicadoException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -51,6 +52,15 @@ public class GlobalExceptionHandler {
                 HttpStatus.UNPROCESSABLE_ENTITY.value(),
                 "Erro de validação.",
                 List.of(new ErroCampo(e.getCampo(), e.getMessage())));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErroResposta handleAccessDeniedException(AccessDeniedException e) {
+        return new ErroResposta(
+                HttpStatus.FORBIDDEN.value(),
+                "Acesso negado. Você não possui permissão para acessar este recurso.",
+                List.of());
     }
 
     @ExceptionHandler(RuntimeException.class)
