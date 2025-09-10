@@ -99,9 +99,9 @@ public class AutorRepositoryTest {
         livro2.setPreco(BigDecimal.valueOf(55.00));
         livro2.setAutor(autor);
 
-        autor.setLivro(new ArrayList<>());
-        autor.getLivro().add(livro1);
-        autor.getLivro().add(livro2);
+        autor.setLivros(new ArrayList<>());
+        autor.getLivros().add(livro1);
+        autor.getLivros().add(livro2);
 
         autorRepository.save(autor);
     }
@@ -112,8 +112,8 @@ public class AutorRepositoryTest {
         var autor = autorRepository.findById(idAutor).get();
 
         List<Livro> livrosDoAutor = livroRepository.findByAutor(autor);
-        autor.setLivro(livrosDoAutor);
+        autor.setLivros(livrosDoAutor);
 
-        autor.getLivro().forEach(System.out::println);
+        autor.getLivros().forEach(System.out::println);
     }
 }
