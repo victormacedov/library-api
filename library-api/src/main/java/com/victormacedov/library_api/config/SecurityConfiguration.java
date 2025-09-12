@@ -9,6 +9,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -19,7 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
-// ResourceServerConfiguration
+// Resource Server Configuration
 public class SecurityConfiguration {
 
     @Bean
@@ -27,8 +28,6 @@ public class SecurityConfiguration {
         return http
                 // Desabilita proteção CSRF
                 .csrf(AbstractHttpConfigurer::disable)
-                // Habilita autenticação HTTP Basic
-                .httpBasic(Customizer.withDefaults())
                 // Configura login por formulário
                 .formLogin(configurer -> {
                     configurer.loginPage("/login");
@@ -53,6 +52,18 @@ public class SecurityConfiguration {
                 .build();
     }
 
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring().requestMatchers(
+                "/v2/api-docs/**",
+                "/v3/api-docs/**",
+                "/swagger-resources/**",
+                "/swagger-ui.html/**",
+                "/swagger-ui/**",
+                "/webjars/**"
+        );
+    }
+
     // Remove o prefixo "ROLE_" das authorities dos usuários
     @Bean
     public GrantedAuthorityDefaults grantedAuthorityDefaults() {
@@ -69,4 +80,5 @@ public class SecurityConfiguration {
         converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
         return converter;
     }
+
 }
