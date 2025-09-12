@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/autores")
 @RequiredArgsConstructor
 @Tag(name = "Autores", description = "Endpoints para gerenciamento de autores")
+@Slf4j
 public class AutorController implements GenericController {
 
     private final AutorService autorService;
@@ -39,6 +41,7 @@ public class AutorController implements GenericController {
             @ApiResponse(responseCode = "409", description = "Autor já cadastrado.")
     })
     public ResponseEntity<Void> salvarAutor(@RequestBody @Valid AutorDTO autorDTO) {
+        log.info("Cadastrando novo Autor: {}", autorDTO.nome());
 
         Autor autor = autorMapper.toAutor(autorDTO);
         autorService.salvarAutor(autor);
@@ -75,6 +78,8 @@ public class AutorController implements GenericController {
             @ApiResponse(responseCode = "400", description = "Autor possui livros associados e não pode ser deletado.")
     })
     public ResponseEntity<Void> deletarAutorPorId(@PathVariable String id) {
+        log.info("Deletando Autor de ID: {}", id);
+
         var idAutor = UUID.fromString(id);
         Optional<Autor> autorOptional = autorService.obterPorId(idAutor);
 
@@ -121,6 +126,8 @@ public class AutorController implements GenericController {
         if (autorOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+
+        log.info("Atualizando Autor: {}", id);
 
         var autor = autorOptional.get();
         autor.setNome(autorDTO.nome());

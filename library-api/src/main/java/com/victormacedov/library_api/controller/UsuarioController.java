@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/usuarios")
 @AllArgsConstructor
 @Tag(name = "Usuários", description = "Endpoints para cadastro de usuários")
+@Slf4j
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
@@ -32,7 +34,11 @@ public class UsuarioController {
             @ApiResponse(responseCode = "403", description = "Acesso negado.")
     })
     private void salvar(@RequestBody @Valid UsuarioDTO usuarioDTO) {
+        log.info("Recebida requisição para salvar usuário: {}", usuarioDTO);
+
         var usuario = usuarioMapper.toEntity(usuarioDTO);
         usuarioService.salvarUsuario(usuario);
+
+        log.info("Usuário salvo com sucesso: {}", usuario.getId());
     }
 }

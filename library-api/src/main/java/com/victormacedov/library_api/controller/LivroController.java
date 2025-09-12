@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,6 +25,7 @@ import java.util.UUID;
 @RequestMapping("/livros")
 @RequiredArgsConstructor
 @Tag(name = "Livro", description = "Endpoints para gerenciamento de livros")
+@Slf4j
 public class LivroController implements GenericController{
 
     private final LivroService livroService;
@@ -41,6 +43,8 @@ public class LivroController implements GenericController{
             @ApiResponse(responseCode = "403", description = "Acesso negado.")
     })
     public ResponseEntity<Object> salvarLivro(@RequestBody @Valid CadastroLivroDTO cadastroLivroDTO){
+        log.info("Recebida requisição para salvar livro: {}", cadastroLivroDTO);
+
         Livro livro = livroMapper.toLivro(cadastroLivroDTO);
         livroService.salvarLivro(livro);
         var url = gerarHeaderLocation(livro.getId());
@@ -56,6 +60,8 @@ public class LivroController implements GenericController{
             @ApiResponse(responseCode = "403", description = "Acesso negado.")
     })
     public ResponseEntity<ResultadoPesquisaLivroDTO> obterDetalhes(@PathVariable String id){
+        log.info("Buscando detalhes do livro com id: {}", id);
+
         return livroService.obterLivroPorId(UUID.fromString(id))
                 .map(livro -> {
                     var dto = livroMapper.toDTO(livro);
@@ -73,6 +79,8 @@ public class LivroController implements GenericController{
             @ApiResponse(responseCode = "403", description = "Acesso negado.")
     })
     public ResponseEntity<Object> deletarLivro(@PathVariable String id) {
+        log.info("Recebida requisição para deletar livro com id: {}", id);
+
         return livroService.obterLivroPorId(UUID.fromString(id))
                 .map(livro -> {
                     livroService.deletarLivro(livro);
@@ -102,6 +110,8 @@ public class LivroController implements GenericController{
             Integer pagina,
             @RequestParam(value = "tamanho-pagina", defaultValue = "10")
             Integer tamanhoPagina){
+        log.info("Pesquisando livros com filtros - isbn: {}, titulo: {}, nomeAutor: {}, genero: {}, anoPublicacao: {}, pagina: {}, tamanhoPagina: {}",
+                isbn, titulo, nomeAutor, genero, AnoPublicacao, pagina, tamanhoPagina);
 
         Page<Livro> paginaResultado = livroService.pesquisaComFiltros(isbn, titulo, nomeAutor, genero, AnoPublicacao, pagina, tamanhoPagina);
 
@@ -121,6 +131,8 @@ public class LivroController implements GenericController{
             @ApiResponse(responseCode = "403", description = "Acesso negado.")
     })
     public ResponseEntity<Object> atualizarLivro(@PathVariable String id, @RequestBody @Valid CadastroLivroDTO cadastroLivroDTO){
+        log.info("Recebida requisição para atualizar livro com id: {}", id);
+
         return livroService.obterLivroPorId(UUID.fromString(id))
                 .map(livro -> {
                     Livro livroEntidade = livroMapper.toLivro(cadastroLivroDTO);
