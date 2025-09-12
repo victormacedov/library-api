@@ -40,3 +40,11 @@ logging:
     io.github.victormacedov: trace
     org.springframework.web: debug
     org.springframework.security: trace
+
+management:
+  server:
+    port: 9090
+  endpoints:
+    web:
+      exposure:
+        include: '*'
