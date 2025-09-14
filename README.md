@@ -4,7 +4,7 @@ API para gerenciamento de uma biblioteca, desenvolvida em Java com Spring Boot, 
 
 ---
 
-## Tecnologias Utilizadas:
+## Tecnologias Utilizadas
 
 - **Java 21**  
   Linguagem principal da aplicação, robusta e amplamente utilizada para aplicações corporativas.
@@ -81,6 +81,51 @@ API para gerenciamento de uma biblioteca, desenvolvida em Java com Spring Boot, 
 - Controle de acesso por perfis (OPERADOR, GERENTE)
 - Testes automatizados para repositórios e serviços
 - Logging detalhado das operações via SLF4J
+
+---
+
+## Estudo de Segurança com Spring Security, OAuth2 e JWT
+
+Este projeto foi desenvolvido com o objetivo de estudar e aplicar na prática os conceitos de **segurança** em aplicações Java utilizando o Spring Security. O foco principal está em entender, testar e demonstrar os principais fluxos de **autenticação** e **autorização** com OAuth2 e JWT, contemplando cenários reais de APIs REST seguras.
+
+### 🛡️ Como funciona o fluxo de segurança, autenticação e autorização nesta API?
+
+#### 1. Segurança
+
+- **Configuração centralizada:** Por meio das classes `SecurityConfiguration` e `AuthorizationServerConfiguration`, com uso intensivo do Spring Security.
+- **Criptografia de senhas:** Senhas dos usuários são criptografadas usando BCrypt.
+- **Tokens JWT:** Toda autenticação e autorização é feita via tokens JWT, assinados com chave RSA.
+- **OAuth2 Authorization Server:** Implementação completa do fluxo OAuth2, incluindo endpoints para autorizar, obter, validar e revogar tokens.
+- **Proteção dos endpoints:** Só endpoints públicos (login, documentação, etc.) são liberados. O restante exige autenticação via token.
+- **Customização de perfis:** Remoção dos prefixos padrão nos papéis (roles) para facilitar a checagem de permissões.
+
+#### 2. Autenticação
+
+- **Login tradicional:** Usuário acessa `/login` e envia login/senha. As credenciais são verificadas e, se válidas, um JWT é gerado e devolvido.
+- **Login social (OAuth2):** Possibilidade de autenticação via Google. Usuários autenticados por terceiros são registrados automaticamente.
+- **JWT no header:** Após o login, o token JWT é enviado no cabeçalho Authorization em cada requisição.
+
+#### 3. Autorização
+
+- **Por perfil:** Cada endpoint tem restrições de acesso via anotação `@PreAuthorize(...)` nos controllers (ex: apenas GERENTE pode cadastrar autores).
+- **Validação do token:** O backend valida o JWT, extrai os papéis do usuário e permite ou bloqueia o acesso.
+- **Filtros customizados:** Uso de filtros personalizados para garantir que o contexto do usuário seja carregado corretamente.
+
+#### 4. Exemplos práticos de controle de acesso
+
+- `@PreAuthorize("hasRole('GERENTE')")`: Apenas gerentes podem criar, atualizar ou deletar autores.
+- `@PreAuthorize("hasAnyRole('OPERADOR', 'GERENTE')")`: Operadores e gerentes podem visualizar dados.
+
+#### 5. Fluxo resumido
+
+1. Usuário faz login (formulário ou OAuth2).
+2. Backend valida credenciais e gera JWT.
+3. Usuário consome endpoints protegidos, enviando JWT no header.
+4. Backend valida token, verifica permissões e executa ou bloqueia a ação.
+
+---
+
+*Este projeto é ideal para quem deseja estudar e dominar na prática o **Spring Security**, **OAuth2** e **JWT** aplicados em APIs modernas e seguras!*
 
 ---
 
